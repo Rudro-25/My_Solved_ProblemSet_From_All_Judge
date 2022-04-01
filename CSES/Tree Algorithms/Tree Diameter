@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define      PSB         push_back
+#define      ll          long long
+#define      FastIO      ios::sync_with_stdio(0);cin.tie(0); cout.tie(0);
+constexpr ll mod = 1e9  + 7;
+const ll N=3e6+5;
+
+int n,m; // number of nodes and edge
+vector<ll> adj[N];  // adjacency list of graph
+ll depth[N];
+
+ll diam=0;
+ll dfs(ll x,ll p){
+  ll len=0;
+  for(ll y : adj[x]){
+    if(y!=p){
+        depth[y]=depth[n]+1;
+        ll cur=1 + dfs(y,x);
+        diam= max(diam,cur+len);
+        len=max(len,cur);
+    }
+  }
+  return len;
+}
+
+int main(){
+  FastIO
+
+    cin>>n;  // n nodes and m edges.
+    for(ll i=0;i<n;i++) depth[i]=0;
+    for(ll i=1;i<n;i++){
+        ll x,y; cin>>x>>y;
+        x--,y--;
+        adj[x].PSB(y); adj[y].PSB(x);
+    }
+    depth[0]=0;
+
+    dfs(0,-1);
+
+    cout<<diam<<endl; //Maximum no of edges between two node in a graph / tree
+
+
+
+  return 0;
+}
+/*
+
+ans:
+
+*/
