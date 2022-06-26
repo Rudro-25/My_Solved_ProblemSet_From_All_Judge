@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define      PSB         push_back
+#define      ll          long long
+#define      MP          make_pair
+#define      FastIO      ios::sync_with_stdio(0);cin.tie(0); cout.tie(0);
+constexpr ll mod = 1e9  + 7;
+const ll N=3e6+5;
+
+int n,m;
+const int INF = 1000000000;
+vector<pair<int, int>> adj[5005];
+ll d1[N],d2[N];
+
+//complexity: ( nlogn + m ).
+void dijkstra(int s) {
+    for(ll i=0;i<n;i++) d1[i]=d2[i]=INF;
+
+    d1[s] = 0;
+    using pii = pair<int, int>;
+    priority_queue<pii, vector<pii>, greater<pii>> q;
+    q.push({0, s});
+    while (!q.empty()) {
+        int v = q.top().second;
+        int d_v = q.top().first;
+        q.pop();
+
+        for (auto edge : adj[v]) {  
+            int to = edge.first;
+            int len = edge.second;
+
+            if(d1[v]+len<d1[to]){
+                ll temp= d1[to];
+                d1[to]= d1[v]+len;
+                d2[to]=min({d2[to],temp,d2[v]+len,d1[v]+3*len});
+                q.push({d1[to]+d2[to], to});
+            }
+            else if((d1[v]+len)>d1[to] && (d1[v]+len)<d2[to]){
+                d2[to]=d1[v]+len;
+            }
+            else 
+             d2[to]=min({d2[to],d2[v]+len,d1[v]+3*len});
+        }
+    }
+}
+
+int main(){
+  FastIO
+
+  ll Test; cin>>Test;
+  for(ll j=1;j<=Test;j++){
+        cin>>n>>m;
+        for(ll i=0;i<n;i++) adj[i].clear();
+
+        for(int i=0;i<m;i++){
+            int a,b,w; cin>>a>>b>>w;
+            --a,--b;
+            adj[a].PSB(MP(b,w));
+            adj[b].PSB(MP(a,w));
+        }
+        int corner=INF;
+        for(ll i=0;i<adj[0].size();i++){
+            corner= min(corner,adj[0][i].second);
+        }
+
+        dijkstra(0);
+        ll ans= d1[n-1]+2*corner;
+        //cout<<corner<<' '<<d1[n-1]<<' '<<' '<<d2[n-1]<<' ';
+        
+        cout<<"Case "<<j<<": ";
+        cout<<min(ans,d2[n-1])<<endl;
+  }
+
+  return 0;
+}
+
+/* Special Case
+Input:
+    1
+    4 5
+    1 2 3
+    2 3 7
+    3 4 4
+    1 2 4
+    4 1 4
+Output:
+    Case 1: 10
+*/       
